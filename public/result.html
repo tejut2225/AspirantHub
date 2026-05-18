@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Result — ExamPortal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-dark-blue: #1c3c6f;
+      --accent-red: #ff0000;
+      --text-color-light: #ffffff;
+      --text-color-dark: #333;
+      /* Container background is now white */
+      --content-bg: #FFFFFF; 
+      --alt-text-color: #ffcc00;
+      --status-correct: #22c55e;
+      --status-wrong: var(--accent-red);
+      --status-skipped: #7c7c7c;
+      --status-marked: var(--alt-text-color);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://media.cntraveler.com/photos/568ae16e67dc82253d9f72cf/master/pass/Stockholm-Public-Library-Alamy.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.65);
+      z-index: -1;
+    }
+
+    .profile-dropdown {
+      position: fixed;
+      right: 30px;
+      top: 30px;
+      display: inline-block;
+      z-index: 100;
+    }
+
+    .profile-icon {
+      background-color: var(--accent-red);
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #333;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      padding: 5px 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* FIX: Ensures the "Signed in as:" text is white */
+    .dropdown-content div:first-child {
+      color: white !important; 
+    }
+
+    /* Fix from previous step: Ensures the strong text (the name) is white */
+    .dropdown-content strong {
+      color: white !important; 
+    }
+
+    .dropdown-content a,
+    .dropdown-content button {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .dropdown-content a:hover,
+    .dropdown-content button:hover {
+      background-color: var(--primary-dark-blue);
+    }
+
+    .profile-dropdown.show .dropdown-content {
+      display: block;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: var(--content-bg);
+      padding: 35px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 0, 0, 0.1); 
+      /* Sets default text color to dark (#333) for readability on white background */
+      color: var(--text-color-dark); 
+    }
+
+    @media (max-width: 600px) {
+      .profile-dropdown {
+        right: 15px;
+        top: 15px;
+      }
+      .container {
+        margin: 20px auto;
+        padding: 20px;
+      }
+    }
+
+    header h2 {
+      margin: 0 0 5px;
+      color: var(--alt-text-color); 
+      font-size: 2rem;
+      border-bottom: 2px solid var(--accent-red);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    header p {
+      /* Text color for this paragraph is now dark */
+      color: var(--text-color-dark); 
+      font-size: 1.1rem;
+      margin: 0 0 25px;
+    }
+
+    h3 {
+      color: var(--accent-red);
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    #summary p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    #summary span {
+      font-weight: bold;
+      color: var(--alt-text-color);
+    }
+
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 30px auto;
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      /* Changed background to be visible against white */
+      background: rgba(0, 0, 0, 0.1); 
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+
+    .form-actions {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .form-actions button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--text-color-dark);
+      transition: opacity 0.2s ease;
+      min-width: 150px;
+    }
+
+    #tryAgainBtn {
+      background: var(--alt-text-color);
+    }
+
+    #pageLogoutBtn {
+      background: var(--accent-red);
+      color: var(--text-color-light);
+    }
+
+    .form-actions button:hover {
+      opacity: 0.85;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 30px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border: none;
+      text-align: left;
+    }
+
+    td {
+      /* Changed table row separator color */
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    th {
+      background-color: var(--primary-dark-blue);
+      color: var(--text-color-light);
+      font-weight: bold;
+    }
+
+    #questionTable tbody tr {
+      /* Light background for table rows on white container */
+      background-color: rgba(0, 0, 0, 0.03); 
+      transition: background-color 0.2s;
+    }
+
+    #questionTable tbody tr:hover {
+      /* Changed hover effect color */
+      background-color: rgba(0, 0, 0, 0.1); 
+    }
+
+    tr.correct td {
+      background-color: rgba(34, 197, 94, 0.1);
+      border-left: 5px solid var(--status-correct);
+    }
+
+    tr.wrong td {
+      background-color: rgba(255, 0, 0, 0.1);
+      border-left: 5px solid var(--status-wrong);
+    }
+
+    tr.skipped td {
+      background-color: rgba(124, 124, 124, 0.1);
+      border-left: 5px solid var(--status-skipped);
+    }
+
+    tr.marked td {
+      background-color: rgba(255, 204, 0, 0.1);
+      border-left: 5px solid var(--status-marked);
+      color: var(--text-color-dark); /* Ensure text is readable */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="profile-dropdown" id="profileDropdown">
+    <div class="profile-icon" id="profileIcon">M</div>
+    <div class="dropdown-content" id="dropdownMenu">
+      <div style="padding: 12px 16px; font-size: 0.9em; border-bottom: 1px solid #555;">
+        Signed in as: <br><strong id="profileDisplayName">Loading...</strong>
+      </div>
+      <a href="profilemenu.html"><i class="fas fa-user-edit"></i> Edit Profile</a>
+      <button id="logoutButton"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+    </div>
+  </div>
+
+  <main class="container">
+    <header>
+      <h2>Exam Result Analysis</h2>
+      <p>Here is the detailed summary of your recent practice session.</p>
+    </header>
+
+    <section id="summary">
+      <p>Total Questions: <span id="totalQ">0</span></p>
+      <p>Correct Answers: <span id="correct">0</span></p>
+      <p>Wrong Answers: <span id="wrong">0</span></p>
+      <p>Skipped/Unanswered: <span id="skipped">0</span></p>
+      <p>Time Taken: <span id="timeTaken">0 sec</span></p>
+      <p>Average Time per Question: <span id="avgTime">0 sec</span></p>
+    </section>
+
+    <div class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </div>
+
+    <h3>Question Details</h3>
+    <table id="questionTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Question</th>
+          <th>Your Answer</th>
+          <th>Correct Answer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="form-actions">
+      <button id="tryAgainBtn"><i class="fas fa-redo"></i> Try Another Exam</button>
+      <button id="pageLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="profilemenu.js"></script>
+  <script type="module" src="result.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pageLogoutBtn = document.getElementById('pageLogoutBtn');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      const menuLogoutBtn = document.getElementById('logoutButton');
+      const profileIcon = document.getElementById('profileIcon');
+      const profileDropdown = document.getElementById('profileDropdown');
+
+      if (profileIcon && profileDropdown) {
+        profileIcon.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!profileDropdown.contains(e.target)) {
+            profileDropdown.classList.remove('show');
+          }
+        });
+      }
+
+      if (tryAgainBtn) {
+        tryAgainBtn.addEventListener('click', () => {
+          window.location.href = "exam.html";
+        });
+      }
+
+      if (pageLogoutBtn && menuLogoutBtn) {
+        pageLogoutBtn.addEventListener('click', () => {
+          menuLogoutBtn.click();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

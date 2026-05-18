@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Examination</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f9fafb;
+      --card-bg: #e5e7eb;
+      --accent-red: #ef4444;
+      --text-color: #1f2937;
+      --alt-text-color: #4b5563;
+      --answered-color: #10b981;
+      --marked-color: #f59e0b;
+      --current-color: #2563eb; 
+      --accent-yellow: #f59e0b;
+      --primary-blue: #2563eb; 
+    }
+
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-color);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-top: 64px;
+    }
+
+    .main-container-card {
+      border: 1px solid var(--primary-blue) !important;
+    }
+
+    input[type="text"], textarea {
+      color: var(--text-color) !important;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--alt-text-color) !important;
+      opacity: 1;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--primary-blue) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.5) !important;
+    }
+
+    #palette button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: 1px solid var(--primary-blue);
+      background-color: var(--card-bg);
+      color: var(--alt-text-color);
+    }
+
+    #palette button.unanswered:hover {
+      background-color: var(--card-bg);
+      box-shadow: 0 0 5px rgba(37, 99, 235, 0.2);
+    }
+
+    #palette button.answered {
+      background-color: var(--answered-color);
+      color: var(--primary-bg);
+      border-color: var(--answered-color);
+    }
+
+    #palette button.marked {
+      background-color: var(--marked-color);
+      color: var(--primary-bg);
+      border-color: var(--marked-color);
+    }
+
+    #palette button.current {
+      background-color: var(--current-color);
+      color: var(--primary-bg);
+      border: 2px solid var(--primary-blue);
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+      transform: scale(1.05);
+    }
+
+    #palette button.marked.answered {
+      background-color: #d97706;
+      color: var(--primary-bg);
+    }
+
+    #palette button.current.answered,
+    #palette button.current.marked {
+      background-color: var(--current-color);
+      color: var(--primary-bg);
+    }
+
+    /* STRICT OVERRIDE: Option boxes must be White with Blue border. */
+    #options .option-label, 
+    .option-label {
+      cursor: pointer !important;
+      transition: all 0.2s ease-in-out !important;
+      border: 2px solid var(--primary-blue) !important;
+      background-color: #ffffff !important; 
+      color: var(--text-color) !important;
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 1rem !important;
+      border-radius: 0.5rem !important;
+    }
+
+    #options .option-label:hover {
+      background-color: #f0f7ff !important;
+    }
+
+    #options .option-label.selected {
+      border-color: var(--primary-blue) !important;
+      background-color: rgba(37, 99, 235, 0.1) !important;
+      box-shadow: 0 0 8px rgba(37, 99, 235, 0.2) !important;
+    }
+
+    .option-label input[type="radio"] {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      width: 18px !important;
+      height: 18px !important;
+      border: 2px solid var(--primary-blue) !important;
+      border-radius: 50% !important;
+      background: white !important;
+      cursor: pointer !important;
+      display: inline-block !important;
+      vertical-align: middle !important;
+      position: relative !important;
+      margin-right: 12px !important;
+      outline: none !important;
+    }
+
+    .option-label input[type="radio"]:checked::after {
+      content: '' !important;
+      width: 10px !important;
+      height: 10px !important;
+      background: var(--primary-blue) !important;
+      border-radius: 50% !important;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      display: block !important;
+    }
+
+    #submitModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 50;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-lg border-b border-[#2563eb]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-[#2563eb] tracking-wider">
+        Practice Examination
+      </h1>
+
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center bg-blue-500/10 text-[#2563eb] p-2 rounded-lg font-mono text-lg font-semibold border-2 border-blue-300 shadow-inner">
+          <span data-lucide="clock" class="w-5 h-5 mr-2"></span>
+          <span id="timer">00:00</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="submitModal">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-[#2563eb] text-gray-900 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <h2 class="text-2xl font-bold mb-4 text-[#2563eb] flex items-center">
+        <span data-lucide="alert-triangle" class="w-6 h-6 mr-2"></span>
+        Confirm Submission
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Are you sure you want to end the exam? You will not be able to change your answers after submission.
+      </p>
+
+      <div class="space-y-2 text-sm mb-6 p-4 bg-gray-50 text-gray-700 rounded-lg border border-[#2563eb]">
+        <p class="flex justify-between font-semibold">
+          Time Remaining: <span id="modalTimerDisplay" class="text-[#2563eb]">00:00</span>
+        </p>
+        <p class="flex justify-between">
+          Questions Attempted: <span id="modalAttemptedCount" class="text-answered-color font-mono">0</span>
+        </p>
+        <p class="flex justify-between">
+          Questions Marked: <span id="modalMarkedCount" class="text-marked-color font-mono">0</span>
+        </p>
+      </div>
+
+      <div class="flex justify-end space-x-4">
+        <button id="cancelSubmitBtn" class="px-4 py-2 bg-gray-200 text-gray-800 hover:bg-gray-300 rounded-lg transition">
+          Cancel
+        </button>
+        <button id="confirmSubmitBtn" class="px-4 py-2 bg-[#2563eb] hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+          Submit Exam
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-8">
+
+        <div class="main-container-card bg-secondary-bg p-6 sm:p-8 rounded-xl shadow-xl border border-[#2563eb]">
+          <div class="flex justify-between items-center mb-6 border-b border-[#2563eb] pb-4">
+            <span id="questionNumber" class="text-2xl font-extrabold text-[#2563eb]">Q1 / 10</span>
+            <div class="flex items-center space-x-4 text-lg font-mono text-alt-text-color">
+              <span data-lucide="timer" class="w-5 h-5 text-gray-400"></span>
+              <span class="text-sm">Time on Q:</span>
+              <span id="qTimer" class="font-bold text-lg text-[#2563eb]">00:00</span>
+            </div>
+          </div>
+          <div id="questionText" class="text-lg mb-8 leading-relaxed text-text-color">
+            Loading question... Please wait.
+          </div>
+          <div id="options" class="space-y-4"></div>
+        </div>
+
+        <div class="main-container-card flex flex-wrap justify-between gap-4 p-4 bg-secondary-bg rounded-xl shadow-lg border border-[#2563eb]">
+          <div class="flex space-x-3">
+            <button id="prevBtn" disabled class="flex items-center px-4 py-3 bg-gray-200 hover:bg-gray-300 text-[#2563eb] border border-[#2563eb] font-semibold rounded-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+              <span data-lucide="arrow-left" class="w-5 h-5 mr-2"></span>Previous
+            </button>
+            <button id="nextBtn" class="flex items-center px-4 py-3 bg-[#2563eb] hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition">
+              Next<span data-lucide="arrow-right" class="w-5 h-5 ml-2"></span>
+            </button>
+          </div>
+          <div class="flex space-x-3">
+            <button id="clearBtn" class="flex items-center px-4 py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg shadow-md transition">
+              <span data-lucide="trash-2" class="w-5 h-5 mr-2"></span>Clear Answer
+            </button>
+            <button id="markBtn" class="flex items-center px-4 py-3 bg-white border border-[#f59e0b] hover:bg-amber-50 text-[#f59e0b] font-semibold rounded-lg shadow-md transition">
+              <span data-lucide="flag" class="w-5 h-5 mr-2"></span>Mark for Review
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="lg:col-span-1 space-y-8">
+
+        <div class="main-container-card bg-secondary-bg p-6 rounded-xl shadow-lg border border-[#2563eb]">
+          <h3 class="text-xl font-bold mb-4 border-b border-[#2563eb] pb-2 text-[#2563eb]">Exam Configuration</h3>
+          <dl class="text-sm space-y-2">
+            <div class="flex justify-between">
+              <dt class="font-bold text-alt-text-color">Standard:</dt>
+              <dd id="configStandard" class="text-[#2563eb] font-bold">N/A</dd>
+            </div>
+            <div id="streamBranchRow" class="flex justify-between" style="display:none;">
+              <dt class="font-bold text-alt-text-color">Stream/Branch:</dt>
+              <dd id="configStream" class="text-[#2563eb] font-bold">N/A</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="font-bold text-alt-text-color">Questions:</dt>
+              <dd id="configQuestions" class="text-[#2563eb] font-bold">0</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="font-bold text-alt-text-color">Topic:</dt>
+              <dd id="configTopic" class="text-[#2563eb] font-bold">N/A</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="font-bold text-alt-text-color">Company:</dt>
+              <dd id="configCompany" class="text-[#2563eb] font-bold">N/A</dd>
+            </div>
+            <div class="flex justify-between border-t border-[#2563eb] pt-2 mt-2">
+              <dt class="font-bold text-[#2563eb]">Total Duration:</dt>
+              <dd id="configTotalTime" class="text-[#2563eb] font-bold">0 min 0 sec</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="main-container-card bg-secondary-bg p-6 rounded-xl shadow-lg border border-[#2563eb]">
+          <h3 class="text-xl font-bold mb-4 text-[#2563eb]">Question Palette</h3>
+          <div id="palette" class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 xl:grid-cols-6 gap-3"></div>
+        </div>
+
+        <div class="main-container-card bg-secondary-bg p-6 rounded-xl shadow-lg border border-[#2563eb]">
+          <h3 class="text-xl font-bold mb-4 border-b border-[#2563eb] pb-2 text-[#2563eb]">Exam Summary</h3>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="p-3 rounded-lg bg-gray-100 border border-[#2563eb]">
+              <div class="text-xs text-alt-text-color">Total</div>
+              <div id="totalQuestions" class="text-2xl font-bold text-text-color">0</div>
+            </div>
+            <div class="p-3 rounded-lg bg-answered-color/10 border border-answered-color">
+              <div class="text-xs text-alt-text-color">Attempted</div>
+              <div id="attemptedCount" class="text-2xl font-bold text-answered-color">0</div>
+            </div>
+            <div class="p-3 rounded-lg bg-marked-color/10 border border-marked-color">
+              <div class="text-xs text-alt-text-color">Marked</div>
+              <div id="markedCount" class="text-2xl font-bold text-marked-color">0</div>
+            </div>
+          </div>
+        </div>
+
+        <button id="submitBtn" class="w-full py-4 bg-[#2563eb] hover:bg-blue-700 text-white text-xl font-bold rounded-xl shadow-xl transition">
+          Submit Test
+        </button>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    setLogLevel('Debug');
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    if (Object.keys(firebaseConfig).length > 0) {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.auth = auth;
+      window.__app_id = appId;
+
+      async function authenticate() {
+        try {
+          if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+            console.log("Firebase: Signed in with custom token.");
+          } else {
+            await signInAnonymously(auth);
+            console.log("Firebase: Signed in anonymously.");
+          }
+        } catch (error) {
+          console.error("Firebase Auth Error:", error);
+        }
+      }
+
+      authenticate();
+    } else {
+      console.error("Firebase config is missing. Database access will fail.");
+    }
+  </script>
+
+  <script type="module" src="exam.js"></script>
+</body>
+</html>

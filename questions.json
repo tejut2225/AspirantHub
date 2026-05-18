@@ -1,0 +1,41 @@
+{
+  "q_gate_004": {
+    "company": "TCS",
+    "company+topic": "TCS_Algorithms",
+    "correct_answer": "Option B",
+    "option_a": "5",
+    "option_b": "10",
+    "option_c": "15",
+    "option_d": "20",
+    "option_e": "25",
+    "qID": "4",
+    "qtext": "If a linked list is sorted, what is the best search complexity?",
+    "topic": "Algorithms"
+  },
+  "q_gate_005": {
+    "company": "Wipro",
+    "company+topic": "Wipro_DBMS",
+    "correct_answer": "Foreign Key",
+    "option_a": "Candidate Key",
+    "option_b": "Superkey",
+    "option_c": "Foreign Key",
+    "option_d": "Unique Key",
+    "option_e": "Primary Key",
+    "qID": "5",
+    "qtext": "What is a key that references the primary key of another table?",
+    "topic": "DBMS"
+  },
+  "q_gate_006": {
+    "company": "Infosys",
+    "company+topic": "Infosys_OS",
+    "correct_answer": "Segmentation",
+    "option_a": "Paging",
+    "option_b": "Segmentation",
+    "option_c": "Thrashing",
+    "option_d": "Swapping",
+    "option_e": "Virtualization",
+    "qID": "6",
+    "qtext": "The technique of dividing the memory into logical blocks of variable size is called?",
+    "topic": "Operating System"
+  }
+}

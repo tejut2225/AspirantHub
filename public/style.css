@@ -1,0 +1,220 @@
+/* -----------------------------
+   General Reset
+----------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* -----------------------------
+   Body & Fullscreen Layout
+----------------------------- */
+body.fullscreen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eaf0f8;
+}
+
+/* -----------------------------
+   Container
+----------------------------- */
+.container {
+  width: 90%;
+  max-width: 900px;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* -----------------------------
+   Headers
+----------------------------- */
+h1, h2, h3 {
+  margin-bottom: 12px;
+  color: #333;
+  text-align: center;
+}
+
+.muted {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* -----------------------------
+   Forms
+----------------------------- */
+.form label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+/* -----------------------------
+   Buttons
+----------------------------- */
+button {
+  padding: 10px 18px;
+  margin: 4px;
+  border: none;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button.alt {
+  background-color: #2196f3;
+}
+
+button:hover,
+button:focus {
+  opacity: 0.9;
+  outline: none;
+}
+
+/* -----------------------------
+   Form Actions
+----------------------------- */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* -----------------------------
+   Exam Page
+----------------------------- */
+.exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+#questionArea {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 150px;
+  margin-bottom: 12px;
+  background-color: #fafafa;
+}
+
+.exam-controls button {
+  margin-right: 6px;
+}
+
+/* Question palette */
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.palette button {
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  border-radius: 50%;
+  border: 1px solid #999;
+  background-color: #eee;
+  font-weight: bold;
+}
+
+.palette button.answered {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.palette button.marked {
+  background-color: #ff9800;
+  color: #fff;
+}
+
+/* Submit section */
+.submit-section {
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* -----------------------------
+   Preview Section
+----------------------------- */
+#previewSection ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+/* -----------------------------
+   Result Page
+----------------------------- */
+#summary p {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+/* -----------------------------
+   Images in Questions
+----------------------------- */
+#questionArea img {
+  max-width: 100%;
+  display: block;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+/* -----------------------------
+   Center Actions Section (Home page)
+----------------------------- */
+.center-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+/* -----------------------------
+   Responsive
+----------------------------- */
+@media (max-width: 600px) {
+  .exam-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .palette button {
+    width: 35px;
+    height: 35px;
+  }
+
+  .container {
+    padding: 20px;
+  }
+}

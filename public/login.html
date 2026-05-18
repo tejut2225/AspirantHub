@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login — Gate Exam Preparation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* --- CSS Variables for Customization --- */
+        :root {
+            /* Main login panel background color is White */
+            --primary-dark-blue: #FFFFFF; 
+            /* Red color changed to Black for accent */
+            --accent-black: #000000; /* Changed from --accent-red to --accent-black */
+            --google-white: #ffffff;
+            /* Text color over the white background is set to dark (black/grey) */
+            --text-color-light: #333; 
+            --text-color-dark: #333;
+            --register-alt-bg: #8899b8;
+        }
+
+        /* --- Base Reset and Layout --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+        }
+
+        .login-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- Home Button Styles --- */
+        .home-button {
+            /* Position relative to the login-form-section */
+            position: absolute; 
+            
+            /* Positioning in the top right corner of the login form */
+            top: 20px; 
+            right: 30px; 
+            
+            /* Styling */
+            display: inline-block;
+            padding: 8px 12px; 
+            background-color: var(--accent-black); /* Changed to black */
+            color: white; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-weight: 500;
+            font-size: 0.9em;
+            z-index: 10; /* Keep it above other elements */
+            transition: background-color 0.2s;
+        }
+
+        .home-button:hover {
+            background-color: #333333; /* Slightly darker black on hover */
+        }
+        /* --- End Home Button Styles --- */
+
+
+        /* --- Left Banner Section --- */
+        .banner-section {
+            flex: 1; 
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #44567e;
+        }
+
+        .banner-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1; 
+        }
+
+        .banner-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #ffffff; /* Keeping the text over the image white */
+            z-index: 2;
+            padding: 60px;
+            background: rgba(0, 0, 0, 0.4); 
+        }
+
+        /* --- ANIMATION KEYFRAMES --- */
+        @keyframes floating {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); 
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        .main-question {
+            position: absolute;
+            top: 15%; 
+            left: 10%;
+            font-size: 3.5vw; 
+            font-weight: bold;
+            color: #ffffff; /* Keeping the text over the image white */
+            z-index: 3;
+            line-height: 1.2;
+            max-width: 40%;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        /* --- Right Login Form Section --- */
+        .login-form-section {
+            flex: 1; 
+            /* This property now uses the WHITE color defined in :root */
+            background-color: var(--primary-dark-blue);
+            /* Text color changed to dark for contrast on the white background */
+            color: var(--text-color-dark);
+            padding: 50px 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            /* CRITICAL: Set position to relative so .home-button can be positioned absolutely inside it */
+            position: relative; 
+            overflow-y: auto; 
+        }
+
+        .login-header {
+            text-align: right;
+            padding-bottom: 20px;
+        }
+
+        .test-prep-heading {
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        .test-prep-heading::after {
+            content: " \2731"; 
+            /* Star color changed to black */
+            color: var(--accent-black); /* Changed to black */
+            font-size: 1.2em;
+            vertical-align: super;
+        }
+
+        .login-form-content {
+            flex-grow: 1;
+        }
+
+        /* Social Login Button */
+        .social-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-btn i {
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .google-btn {
+            background-color: var(--google-white);
+            color: var(--text-color-dark);
+            border: 1px solid #ddd; /* Added a subtle border for definition */
+        }
+
+        .or-separator {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 0.9em;
+            /* Color for the 'or' separator */
+            color: rgba(51, 51, 51, 0.7);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: var(--accent-black); /* Changed to black */
+            font-weight: normal; 
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--accent-black); /* Changed to black */
+            background-color: transparent;
+            /* Text color for inputs on white background */
+            color: var(--text-color-dark); 
+            font-size: 1em;
+            border-radius: 0; 
+            outline: none;
+        }
+
+        ::placeholder {
+            /* Placeholder color for inputs on white background */
+            color: rgba(51, 51, 51, 0.5);
+            opacity: 1; 
+        }
+
+        .forgot-and-checkbox {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0 30px;
+            font-size: 0.9em;
+        }
+
+        .forgot-password {
+            color: var(--accent-black); /* Changed to black */
+            text-decoration: none;
+            cursor: pointer; 
+            transition: color 0.2s;
+        }
+        .forgot-password:hover {
+            color: #333333; /* Slightly darker black on hover */
+        }
+
+        .keep-me-in {
+            display: flex;
+            align-items: center;
+        }
+
+        .keep-me-in input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+            /* Checkbox border color to dark for visibility */
+            border: 1px solid var(--text-color-dark); /* Corrected `1:px` to `1px` */
+            padding: 0;
+        }
+        .keep-me-in label {
+            /* Checkbox label color to dark for visibility */
+            color: var(--text-color-dark); 
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        /* --- Action Buttons --- */
+        .action-buttons-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+            padding-bottom: 5px; 
+        }
+        
+        .login-btn, .register-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: opacity 0.3s;
+        }
+
+        .login-btn {
+            background-color: var(--accent-black); /* Changed to black */
+            color: #ffffff; /* Login button text remains white for contrast on black */
+            text-align: center; 
+        }
+
+        .register-btn {
+            background-color: var(--register-alt-bg); 
+            color: #ffffff; 
+            text-align: center;
+        }
+
+        .login-btn:hover, .register-btn:hover {
+            opacity: 0.85;
+        }
+        
+        #loginForm .form-actions {
+            display: none !important;
+        }
+
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            .banner-section {
+                flex: none;
+                height: 25vh; 
+            }
+            .main-question {
+                font-size: 6vw;
+                max-width: 80%;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                animation: none;
+            }
+            .login-form-section {
+                flex: none;
+                height: 75vh;
+                padding: 30px 40px;
+            }
+            /* Adjust the home button position for mobile (if needed) */
+            .home-button {
+                top: 15px;
+                right: 15px;
+                padding: 6px 10px; 
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="banner-section">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.1v6KAInM_VMA3Y6TImTdugHaD_?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Banner Image" class="banner-image">
+            
+            <div class="banner-content">
+                <h1 class="main-question">Where will you take you?</h1>
+            </div>
+        </div>
+
+        <div class="login-form-section">
+            <a href="index.html" class="home-button">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <div class="login-header">
+                <h2 class="test-prep-heading">GATE EXAM PREPARATION</h2>
+            </div>
+
+            <div class="login-form-content">
+                <button type="button" class="social-btn google-btn"><i class="fab fa-google"></i> Login with Google</button>
+
+                <p class="or-separator">or</p>
+
+                <form id="loginForm" class="form">
+                    
+                    <div class="input-group">
+                        <label for="email">Please enter your Email Address</label>
+                        <input id="email" name="email" type="email" value="m78862787@gmail.com" placeholder="Email Address" required autocomplete="email" />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Please enter your password</label>
+                        <input id="password" name="password" type="password" value="********" placeholder="Password" required autocomplete="current-password" />
+                    </div>
+
+                    <div class="forgot-and-checkbox">
+                        <a href="#" class="forgot-password" id="forgotPasswordLink">Did you forget your password? Click here</a>
+                        <div class="keep-me-in">
+                            <input type="checkbox" id="keep-me-in" name="keep-me-in">
+                            <label for="keep-me-in">Keep me signed in</label>
+                        </div>
+                    </div>
+                    
+                    <div id="msg" class="muted small msg" aria-live="polite" style="color: #000000; text-align: center;"></div> <div class="action-buttons-wrapper">
+                        <button type="submit" class="login-btn">Login</button>
+                        
+                        <button type="button" class="register-btn" id="toRegister">Register</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="login.js"></script>
+</body>
+</html>

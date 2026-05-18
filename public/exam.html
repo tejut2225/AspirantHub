@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-dark-blue-opaque: #1c3c6f;
+            --accent-blue: #007bff;
+            --text-color-dark: #333;
+            --text-color-light: #ffffff;
+            --input-border-color: #007bff;
+            --start-btn-bg: #007bff;
+            --summary-bg: #ffffff;
+            --container-bg: #ffffff;
+            --body-bg: #f5f5f5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--body-bg);
+            position: relative;
+        }
+
+        body::before {
+            content: none;
+        }
+
+        .back-button {
+            position: fixed;
+            left: 30px;
+            top: 30px;
+            color: var(--text-color-light);
+            background-color: var(--accent-blue);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            color: var(--text-color-light);
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-dropdown {
+            position: fixed;
+            right: 30px;
+            top: 30px;
+            display: inline-block;
+            z-index: 100;
+        }
+
+        .profile-icon {
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: #ffffff;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 5px 0;
+            border: 1px solid #ddd;
+        }
+
+        .dropdown-content a,
+        .dropdown-content button {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .dropdown-content a:hover,
+        .dropdown-content button:hover {
+            background-color: #f0f7ff;
+            color: var(--accent-blue);
+        }
+
+        #profileDropdown.show .dropdown-content {
+            display: block;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            min-height: 90vh;
+            background: var(--container-bg);
+            padding: 40px 30px;
+            border-radius: 0;
+            box-shadow: none;
+            color: var(--text-color-dark);
+            margin: 20px 0;
+            align-self: stretch;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--accent-blue);
+            padding-bottom: 10px;
+        }
+
+        .mode-box {
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: rgba(0, 123, 255, 0.05);
+            color: var(--text-color-dark);
+        }
+
+        .mode-box h3 {
+            color: var(--accent-blue);
+            margin-top: 0;
+        }
+
+        .config-box {
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--input-border-color);
+            background-color: transparent;
+            color: var(--text-color-dark);
+            border-radius: 4px;
+            font-size: 1em;
+            outline: none;
+            appearance: none;
+            font-weight: bold;
+        }
+
+        #numQuestions::placeholder {
+            font-weight: bold;
+            color: #666;
+        }
+
+        input[readonly] {
+            background-color: #eee;
+            color: var(--text-color-dark);
+            font-weight: bold;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23007bff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        select option {
+            background-color: #eee;
+            color: var(--text-color-dark);
+            font-weight: bold;
+        }
+
+        .start-btn {
+            display: block;
+            margin: 30px auto 0;
+            background: var(--start-btn-bg);
+            color: var(--text-color-light);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .start-btn:hover {
+            background: #0056b3;
+            transform: scale(1.03);
+        }
+
+        .summary-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: var(--summary-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            color: var(--text-color-dark);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-box strong {
+            color: var(--accent-blue);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+                width: 100%;
+                margin: 0;
+                min-height: 100vh;
+            }
+            h2 { font-size: 1.8rem; }
+            .profile-dropdown { right: 15px; top: 15px; }
+            .back-button { left: 15px; top: 15px; font-size: 1rem; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="login.html" class="back-button" title="Go back">Back</a>
+
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-icon" id="profileIcon">P</div>
+        <div class="dropdown-content">
+            <div style="padding: 12px 16px; font-size: 0.9em; border-bottom: 1px solid #eee; color: #666;">
+                Signed in as:<br><strong id="profileDisplayName" style="color: var(--accent-blue);">Loading...</strong>
+            </div>
+            <a href="profilemenu.html"><i class="fas fa-user-edit"></i> Edit Profile</a>
+            <button id="logoutButton"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Exam Portal (A Key To Unlock All Free Practice Examination)</h2>
+
+        <div class="mode-box">
+            <h3>Practice Examination</h3>
+            <p><b>Choose Filter Type, Number Of Questions To Start Your Exam.</b></p>
+            <p><b>Note: Intermediate students kindly ignore Filter by</b></p>
+        </div>
+
+        <div class="config-box">
+            <label for="standardFilter">Filter by Standard</label>
+            <select id="standardFilter">
+                <option value="" disabled selected style="font-weight: bold;">-- Select Standard --</option>
+                <option value="10th">10th</option>
+                <option value="Inter">Inter</option>
+                <option value="Engineering">Engineering</option>
+            </select>
+
+            <div id="streamBranchContainer" style="display: none;">
+                <label for="streamBranchFilter">Select Stream/Branch</label>
+                <select id="streamBranchFilter">
+                    <option value="" disabled selected style="font-weight: bold;">-- Select Stream/Branch --</option>
+                </select>
+            </div>
+
+            <label for="filterType">Filter by</label>
+            <select id="filterType">
+                <option value="" style="font-weight: bold;">--Select Filter Type--</option>
+                <option value="company">Company</option>
+                <option value="topic">Topic</option>
+                <option value="companyTopic">Company + Topic</option>
+            </select>
+
+            <div id="filterOptions"></div>
+
+            <label for="numQuestions">Number of Questions</label>
+            <input type="number" id="numQuestions" min="1" placeholder="Enter number of questions" />
+
+            <label for="duration">Duration</label>
+            <input type="text" id="duration" readonly value="0 min 0 sec" />
+
+            <button class="start-btn" id="startExam">Start Exam</button>
+
+            <div id="selectedSummary" class="summary-box" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const filterType = document.getElementById("filterType");
+        const filterOptions = document.getElementById("filterOptions");
+        const numInput = document.getElementById("numQuestions");
+        const durationBox = document.getElementById("duration");
+        const startExamBtn = document.getElementById("startExam");
+        const selectedSummary = document.getElementById("selectedSummary");
+        const standardFilter = document.getElementById("standardFilter");
+        const streamBranchContainer = document.getElementById("streamBranchContainer");
+        const streamBranchFilter = document.getElementById("streamBranchFilter");
+
+        const companies = ["Wipro", "TCS", "Infosys", "HCL"];
+        const topics = ["Arrays", "Strings", "Recursion", "Dynamic Programming"];
+        const secondsPerQuestion = 30;
+
+        const streamOptions = {
+            'Inter': ['MPC', 'BPC', 'CEC', 'HPC'],
+            'Engineering': ['CSE', 'ECE', 'CIVIL', 'MECHANIC']
+        };
+
+        function populateStreamBranch(standard) {
+            streamBranchFilter.innerHTML = '<option value="" disabled selected style="font-weight: bold;">-- Select Stream/Branch --</option>';
+            
+            // LOGIC FOR FILTER BY OPTIONS BASED ON STANDARD
+            if (standard === 'Inter') {
+                filterType.disabled = true;
+                filterType.innerHTML = '<option value="">--Disabled for Inter--</option>';
+                filterType.style.opacity = "0.6";
+                filterOptions.innerHTML = ""; 
+            } else if (standard === '10th') {
+                filterType.disabled = false;
+                filterType.style.opacity = "1";
+                filterType.innerHTML = `
+                    <option value="" style="font-weight: bold;">--Select Subject--</option>
+                    <option value="English">English</option>
+                    <option value="Maths">Maths</option>
+                    <option value="Science">Science</option>
+                    <option value="Social">Social Science</option>
+                `;
+                filterOptions.innerHTML = "";
+            } else {
+                filterType.disabled = false;
+                filterType.style.opacity = "1";
+                filterType.innerHTML = `
+                    <option value="" style="font-weight: bold;">--Select Filter Type--</option>
+                    <option value="company">Company</option>
+                    <option value="topic">Topic</option>
+                    <option value="companyTopic">Company + Topic</option>
+                `;
+                filterOptions.innerHTML = "";
+            }
+
+            if (streamOptions[standard]) {
+                streamBranchContainer.style.display = 'block';
+                streamOptions[standard].forEach(stream => {
+                    const option = document.createElement('option');
+                    option.value = stream.toLowerCase();
+                    option.textContent = stream;
+                    streamBranchFilter.appendChild(option);
+                });
+            } else {
+                streamBranchContainer.style.display = 'none';
+            }
+            updateSummary();
+        }
+
+        standardFilter.addEventListener('change', function() { populateStreamBranch(this.value); });
+        streamBranchFilter.addEventListener('change', updateSummary);
+
+        function createDropdown(name, options) {
+            const label = document.createElement("label");
+            label.textContent = `Select ${name.charAt(0).toUpperCase() + name.slice(1)}:`;
+            const select = document.createElement("select");
+            select.id = name;
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = `--Select ${name}--`;
+            defaultOption.style.fontWeight = "bold";
+            select.appendChild(defaultOption);
+            options.forEach(opt => {
+                const option = document.createElement("option");
+                option.value = opt.toLowerCase();
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+            filterOptions.appendChild(label);
+            filterOptions.appendChild(select);
+            select.addEventListener("change", updateSummary);
+        }
+
+        function updateSummary() {
+            const selectedType = filterType.value || "N/A";
+            const selectedCompany = document.getElementById("company")?.value || "Any";
+            const selectedTopic = document.getElementById("topic")?.value || "Any";
+            const selectedStandard = standardFilter.value || "N/A";
+            const selectedStream = streamBranchFilter.value || "Any";
+            const numQuestions = parseInt(numInput.value) || 0;
+            const totalSeconds = numQuestions * secondsPerQuestion;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            durationBox.value = `${minutes} min ${seconds} sec`;
+
+            if (!numQuestions && selectedType === "" && selectedStandard === "") {
+                selectedSummary.style.display = "none";
+                return;
+            }
+
+            selectedSummary.innerHTML = `
+                <strong>Selected Configuration:</strong><br>
+                Standard: ${selectedStandard}<br>
+                ${(selectedStandard === 'Inter' || selectedStandard === 'Engineering') ? `Stream/Branch: ${selectedStream}<br>` : ''}
+                Filter Type/Subject: ${selectedType}<br>
+                ${(selectedStandard === 'Engineering') ? `Company: ${selectedCompany}<br>Topic: ${selectedTopic}<br>` : ''}
+                Questions: ${numQuestions}<br>
+                Duration: ${durationBox.value}
+            `;
+            selectedSummary.style.display = "block";
+        }
+
+        filterType.addEventListener("change", () => {
+            // Only create sub-dropdowns if we are in Engineering/Default mode
+            if (standardFilter.value !== '10th' && standardFilter.value !== 'Inter') {
+                filterOptions.innerHTML = "";
+                const type = filterType.value;
+                if (type === "company") createDropdown("company", companies);
+                else if (type === "topic") createDropdown("topic", topics);
+                else if (type === "companyTopic") {
+                    createDropdown("company", companies);
+                    createDropdown("topic", topics);
+                }
+            }
+            updateSummary();
+        });
+
+        numInput.addEventListener("input", updateSummary);
+        document.addEventListener("DOMContentLoaded", updateSummary);
+
+        startExamBtn.addEventListener("click", () => {
+            const selectedType = filterType.value;
+            const selectedCompany = document.getElementById("company")?.value || "";
+            const selectedTopic = document.getElementById("topic")?.value || "";
+            const selectedStandard = standardFilter.value || "";
+            const selectedStream = streamBranchFilter.value || "";
+            const numQuestions = parseInt(numInput.value) || 0;
+
+            if (!selectedStandard) return alert("Please select a standard.");
+            
+            if (numQuestions <= 0) return alert("Please enter a valid number of questions.");
+
+            if ((selectedStandard === 'Inter' || selectedStandard === 'Engineering') && !selectedStream) {
+                return alert(`Please select a Stream/Branch for ${selectedStandard}.`);
+            }
+
+            if (selectedStandard === 'Engineering' && !selectedType) {
+                return alert("Engineering students must select a 'Filter by' type.");
+            }
+            
+            if (selectedStandard === '10th' && !selectedType) {
+                return alert("10th Class students must select a Subject.");
+            }
+
+            // Save configuration
+            localStorage.setItem("examConfig", JSON.stringify({
+                standard: selectedStandard,
+                stream: selectedStream,
+                filterType: selectedType,
+                // For 10th class, the subject is saved in the 'topic' field to match your exam.js
+                topic: selectedStandard === '10th' ? selectedType.toLowerCase() : selectedTopic.toLowerCase(),
+                company: selectedCompany.toLowerCase(),
+                numQuestions,
+                perQuestionSeconds: secondsPerQuestion
+            }));
+            window.location.href = "exampage.html";
+        });
+
+        const profileIcon = document.getElementById("profileIcon");
+        const profileDropdown = document.getElementById("profileDropdown");
+        profileIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle("show");
+        });
+        window.addEventListener("click", (e) => {
+            if (!profileDropdown.contains(e.target)) profileDropdown.classList.remove("show");
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDiLsLtO-ZbAKoOyLkXbT7ws9AJQhW1sAA",
+            authDomain: "exam-portal-cf32b.firebaseapp.com",
+            projectId: "exam-portal-cf32b",
+            storageBucket: "exam-portal-cf32b.appspot.com",
+            messagingSenderId: "182956377341",
+            appId: "1:182956377341:web:2640609519fc16e7692a94"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const profileDisplayName = document.getElementById("profileDisplayName");
+        const logoutButton = document.getElementById("logoutButton");
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                let displayName = user.displayName || user.email || "User";
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const data = userSnap.data();
+                        displayName = data.name || displayName;
+                    }
+                } catch (err) { console.warn("Firestore read skipped:", err.message); }
+
+                profileDisplayName.textContent = displayName;
+                document.getElementById("profileIcon").textContent = displayName.charAt(0).toUpperCase();
+                localStorage.setItem("userName", displayName);
+            } else {
+                profileDisplayName.textContent = "Guest";
+                document.getElementById("profileIcon").textContent = "P";
+            }
+        });
+
+        logoutButton.addEventListener("click", async () => {
+            await signOut(auth);
+            localStorage.removeItem("userName");
+            window.location.href = "login.html";
+        });
+    </script>
+</body>
+</html>

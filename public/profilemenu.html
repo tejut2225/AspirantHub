@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark-blue: #1c3c6f;
+            --accent-blue: #007bff;
+            --text-color-light: #ffffff;
+            --text-color-dark: #333333;
+            --body-bg: #f5f5f5;
+        }
+
+        /* --- Global Styles --- */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--body-bg);
+        }
+
+        /* --- Full Screen Layout --- */
+        .page-wrapper {
+            width: 100%;
+            min-height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Header / Navigation --- */
+        .header {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eeeeee;
+            z-index: 10;
+        }
+
+        /* Styled Back Button to match reference picture blue style */
+        .header .back-link {
+            cursor: pointer; 
+            display: inline-block;
+            background-color: #0062cc;
+            color: white !important;
+            padding: 6px 18px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header .back-link:hover {
+            background-color: #004a99;
+        }
+
+        /* --- Profile Container --- */
+        .profile-container {
+            width: 95%;
+            max-width: 800px; 
+            background: #ffffff;
+            padding: 40px 20px;
+            color: var(--text-color-dark);
+        }
+
+        /* Heading color set to Blue */
+        h2 {
+            text-align: center;
+            color: var(--accent-blue); 
+            font-size: 2rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent-blue);
+            padding-bottom: 10px;
+        }
+
+        /* Grid for modern layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        /* Thinner input fields: Reduced padding and font size */
+        .profile-data, input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; 
+            padding: 8px 12px; 
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s, border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .profile-data {
+            background-color: #f9f9f9;
+            color: var(--text-color-dark); 
+            min-height: 36px;
+            line-height: 1.4;
+            display: block;
+            border: 1px solid #eeeeee;
+        }
+        
+        input {
+            background-color: #ffffff;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.1);
+        }
+        
+        .edit-input {
+            display: none; 
+        }
+
+        /* --- Buttons --- */
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #editBtn {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        #saveBtn {
+            background-color: #22c55e;
+            color: white;
+            display: none;
+        }
+        
+        #cancelBtn {
+            background-color: #6c757d;
+            color: white;
+            display: none;
+        }
+
+        #message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            color: white;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .button-group { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <div class="header">
+            <a href="#" onclick="history.back(); return false;" class="back-link">Back</a>
+            <div style="font-weight: bold; color: var(--accent-blue);">User Profile</div>
+        </div>
+
+        <div class="profile-container">
+            <h2>Your Account Details</h2>
+
+            <form id="profileForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Email (Read-Only)</label>
+                        <span class="profile-data" id="displayEmail">loading...</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputName">Full Name</label>
+                        <span class="profile-data view-data" id="displayName">...</span>
+                        <input type="text" id="inputName" class="edit-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputContact">Contact Number</label>
+                        <span class="profile-data view-data" id="displayContact">...</span>
+                        <input type="text" id="inputContact" class="edit-input">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="inputCompany">University/College/Institute</label>
+                        <span class="profile-data view-data" id="displayCompany">...</span>
+                        <input type="text" id="inputCompany" class="edit-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputInstType">Institute Type</label>
+                        <span class="profile-data view-data" id="displayInstType">...</span>
+                        <input type="text" id="inputInstType" class="edit-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputStudentID">Student ID (Enrolment Number)</label>
+                        <span class="profile-data view-data" id="displayStudentID">...</span>
+                        <input type="text" id="inputStudentID" class="edit-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputState">State/UT</label>
+                        <span class="profile-data view-data" id="displayState">...</span>
+                        <input type="text" id="inputState" class="edit-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputCity">City</label>
+                        <span class="profile-data view-data" id="displayCity">...</span>
+                        <input type="text" id="inputCity" class="edit-input">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="inputPassword">Change Password (Optional)</label>
+                        <span class="profile-data view-data" id="displayPasswordStatus">Click Edit to change password.</span>
+                        <input type="password" id="inputPassword" class="edit-input" placeholder="New Password">
+                    </div>
+                </div>
+                
+                <div id="message"></div>
+
+                <div class="button-group">
+                    <button type="button" id="editBtn" class="action-btn">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </button>
+                    <button type="submit" id="saveBtn" class="action-btn">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" id="cancelBtn" class="action-btn">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="./firebase.js"></script>
+    <script type="module" src="./profilemenu.js"></script> 
+</body>
+</html>

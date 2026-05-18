@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register — ExamPortal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="fullscreen">
+  <main class="container">
+    <header>
+      <h2>Register</h2>
+      <p class="muted">Create an account using email & OTP verification.</p>
+    </header>
+
+    <form id="registerForm" class="form">
+      <!-- Name -->
+      <label for="name">Full name</label>
+      <input id="name" name="name" type="text" placeholder="Your full name" required autocomplete="name" />
+
+      <!-- Email -->
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" />
+
+      <!-- OTP -->
+      <label for="otp">OTP</label>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <input id="otp" name="otp" type="text" placeholder="Enter OTP" required style="flex:1;" disabled />
+        <button type="button" id="getOtpBtn" class="alt">Send OTP</button>
+      </div>
+
+      <!-- Password -->
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="Choose a password" minlength="6" required autocomplete="new-password" />
+
+      <!-- College -->
+      <label for="college">College / Affiliation (optional)</label>
+      <input id="college" name="college" type="text" placeholder="Your college" autocomplete="organization" />
+
+      <!-- Form actions -->
+      <div class="form-actions">
+        <button type="submit" disabled id="registerBtn">Register</button>
+        <button type="button" class="alt" id="toLogin">Back to Login</button>
+      </div>
+
+      <!-- Message -->
+      <div id="msg" class="muted small msg" aria-live="polite"></div>
+    </form>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+    // Firebase config - replace with your actual config including measurementId
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);  // Initialize Analytics
+
+    const form = document.getElementById('registerForm');
+    const msg = document.getElementById('msg');
+    const getOtpBtn = document.getElementById('getOtpBtn');
+    const otpInput = form.otp;
+    const registerBtn = document.getElementById('registerBtn');
+    const toLoginBtn = document.getElementById('toLogin');
+
+    let otpSent = false;
+
+    // Helper: show message
+    function showMessage(text, color='black') {
+      msg.textContent = text;
+      msg.style.color = color;
+    }
+
+    // Send OTP button click
+    getOtpBtn.addEventListener('click', async () => {
+      const email = form.email.value.trim();
+      if (!email) {
+        showMessage('Please enter a valid email before requesting OTP.', 'red');
+        return;
+      }
+      showMessage('Sending OTP...');
+      try {
+        const res = await fetch('/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showMessage('OTP sent! Check your email.', 'green');
+          otpInput.disabled = false;
+          registerBtn.disabled = false;
+          otpSent = true;
+        } else {
+          showMessage(data.error || 'Failed to send OTP.', 'red');
+        }
+      } catch (err) {
+        showMessage('Error sending OTP: ' + err.message, 'red');
+      }
+    });
+
+    // Form submit (register)
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!otpSent) {
+        showMessage('Please send and verify OTP before registering.', 'red');
+        return;
+      }
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const otp = form.otp.value.trim();
+      const password = form.password.value;
+      const college = form.college.value.trim();
+
+      if (!otp) {
+        showMessage('Please enter the OTP sent to your email.', 'red');
+        return;
+      }
+
+      showMessage('Verifying OTP and registering...');
+      try {
+        // Verify OTP with backend
+        const res = await fetch('/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showMessage(data.error || 'OTP verification failed.', 'red');
+          return;
+        }
+
+        // OTP verified - create Firebase user
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Update display name
+        await updateProfile(user, { displayName: name });
+
+        // Save extra info in Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+          name,
+          email,
+          college: college || null,
+          createdAt: new Date().toISOString(),
+        });
+
+        showMessage('Registration successful! Redirecting to login...', 'green');
+        await signOut(auth);  // sign out new user
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+
+      } catch (error) {
+        showMessage('Registration failed: ' + error.message, 'red');
+      }
+    });
+
+    // Back to login button
+    toLoginBtn.addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

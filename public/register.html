@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register — Practice Exam Preparation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* --- CSS Variables (Matching Login Page) --- */
+        :root {
+            --primary-dark-blue: #1c3c6f; 
+            --accent-red: #000; /* Black for borders/labels as requested previously */
+            --original-red: #ff0000; /* Original bright red for the Login button */
+            --text-color-light: #ffffff;
+            --text-color-dark: #333;
+            --register-alt-bg: #8899b8; 
+            --disabled-color: #aaa;
+        }
+
+        /* === Back Button Style === */
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--text-color-light);
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 5px 10px;
+            z-index: 1001;
+            transition: color 0.2s;
+        }
+
+        .back-button:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        /* =============================== */
+
+        /* --- Global Background and Layout --- */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color-light); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 4rem;
+            
+            /* Background image and overlay */
+            background: url('https://thumbs.dreamstime.com/z/group-young-people-studying-table-library-group-young-people-studying-table-library-162514056.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative; 
+        }
+
+        /* Full screen overlay for dimming the background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        /* --- Header (Top Navbar) --- */
+        header.navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        .navbar h2 {
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* --- Main Content Container (FORM CONTAINER) --- */
+        main.container {
+            background: white; 
+            color: var(--text-color-dark); 
+            padding: 2.5rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            width: 90%; 
+            max-width: 900px; 
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem; 
+            z-index: 1; 
+        }
+        
+        /* Main Registration Heading */
+        .register-heading {
+            color: var(--primary-dark-blue); 
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        p.muted {
+            color: #666; 
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        form.form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; 
+        }
+        
+        /* Grid Layout for field groups */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr); 
+            gap: 1rem;
+            width: 100%;
+        }
+
+        /* Multi-column layouts */
+        .grid-3-col {
+            grid-template-columns: repeat(1, 1fr);
+        }
+        
+        /* Labels */
+        label {
+            text-align: left;
+            color: var(--accent-red); 
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: block; 
+            margin-bottom: 0.25rem;
+        }
+
+        /* Inputs and Selects (including File upload) */
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent-red); 
+            background-color: #f5f5f5; 
+            color: var(--text-color-dark); 
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box; 
+        }
+        
+        /* Styling for select dropdowns to match inputs */
+        select {
+            appearance: none; 
+            -webkit-appearance: none;
+            /* SVG stroke changed to %23333333 (dark grey) */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 2.5rem; 
+        }
+        
+        /* Option elements inside select */
+        select option {
+            color: var(--text-color-dark); 
+            background-color: var(--text-color-light); 
+        }
+
+        ::placeholder {
+            color: #999; 
+            opacity: 1; 
+        }
+
+        /* Checkbox styling */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; 
+            gap: 10px;
+            margin: 1.5rem 0 0.5rem 0;
+            text-align: left;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            min-width: 20px;
+            height: 20px;
+            cursor: pointer;
+            border: 1px solid var(--accent-red); 
+            padding: 0;
+            margin: 0;
+            background-color: transparent; 
+        }
+        
+        .checkbox-group label {
+            color: var(--text-color-dark); 
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+            font-size: 1rem;
+        }
+        
+        .checkbox-group label span {
+            color: var(--accent-red); 
+            font-weight: 500;
+        }
+
+        /* Message Area */
+        .msg {
+            margin-top: 1rem;
+            color: var(--accent-red); 
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* --- Form Actions/Buttons --- */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-actions button {
+            flex: 1;
+            border: none;
+            border-radius: 4px;
+            padding: 15px 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* Proceed/Register Button (Primary Black) */
+        .form-actions button[type="submit"], .form-actions button#nextStepBtn {
+            background: var(--accent-red); 
+            color: white;
+        }
+        
+        /* Disabled Style */
+        .form-actions button:disabled {
+            background: var(--disabled-color); 
+            color: var(--text-color-dark);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 1;
+        }
+        
+        /* Send OTP Button (Secondary) */
+        .form-actions button#sendOtpBtn {
+            background: var(--register-alt-bg);
+            color: var(--text-color-light);
+        }
+
+        /* Login Button (Alt Link) - Set to Red */
+        .form-actions button#toLogin {
+            background: var(--original-red); 
+            color: white; 
+            flex: 100%; 
+            margin-top: 5px;
+        }
+
+        .form-actions button:not(:disabled):hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+        }
+        
+        /* Class to hide the OTP/Verification block initially */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 600px) {
+            .grid-3-col {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 900px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 950px) {
+            main.container {
+                width: 90%;
+                max-width: 90%;
+                padding: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions button {
+                margin: 0.25rem 0;
+            }
+        }
+        
+        /* Fix for required star color */
+        .input-group label span, .form-grid label span {
+              color: var(--accent-red) !important; 
+        }
+    </style>
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="back-button">
+        &lt; Back
+    </a>
+    <header class="navbar">
+        <h2>ExamPortal</h2>
+    </header>
+
+    <main class="container">
+        <header>
+            <h2 class="register-heading">Welcome to Practice Exam Registration</h2>
+            <p class="muted">Complete your profile details to start the exam process.</p>
+        </header>
+
+        <form id="registerForm" class="form">
+            
+            <div id="detailsSection">
+                <div class="input-group">
+                    <label for="instituteName">Name of University/College/Institute <span style="color: var(--accent-red)">*</span></label>
+                    <input id="instituteName" name="instituteName" type="text" placeholder="Enter your Institute Name" required />
+                </div>
+
+                <div class="form-grid grid-3-col">
+                    <div class="input-group">
+                        <label for="instituteType">University/College/Institute Type <span style="color: var(--accent-red)">*</span></label>
+                        <select id="instituteType" name="instituteType" required>
+                            <option value="">Select Type</option>
+                            <option value="university">University</option>
+                            <option value="college">College</option>
+                            <option value="institute">Institute</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="instituteState">Institute State/UT <span style="color: var(--accent-red)">*</span></label>
+                        <select id="instituteState" name="instituteState" required>
+                            <option value="">Select State</option>
+                            </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="instituteCity">Institute City <span style="color: var(--accent-red)">*</span></label>
+                        <select id="instituteCity" name="instituteCity" required disabled>
+                            <option value="">Select District</option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="confirmDetails" name="confirmDetails">
+                    <label for="confirmDetails">I confirm the above details are <span>correct</span></label>
+                </div>
+                
+                <div class="form-grid grid-3-col">
+                    <div class="input-group">
+                        <label for="firstName">First Name <span style="color: var(--accent-red)">*</span></label>
+                        <input id="firstName" name="firstName" type="text" placeholder="First Name" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="middleName">Middle Name</label>
+                        <input id="middleName" name="middleName" type="text" placeholder="Middle Name" />
+                    </div>
+                    <div class="input-group">
+                        <label for="lastName">Last Name <span style="color: var(--accent-red)">*</span></label>
+                        <input id="lastName" name="lastName" type="text" placeholder="Last Name" required />
+                    </div>
+                </div>
+                
+                <div class="form-grid grid-2-col"> 
+                    <div class="input-group">
+                        <label for="contactNumber">Contact Number <span style="color: var(--accent-red)">*</span></label>
+                        <input id="contactNumber" name="contactNumber" type="tel" placeholder="Contact Number" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="studentID">Student ID (Enrolment Number) <span style="color: var(--accent-red)">*</span></label>
+                        <input id="studentID" name="studentID" type="text" placeholder="Student ID (Enrolment Number)" required />
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="email">Email <span style="color: var(--accent-red)">*</span></label>
+                        <input id="email" name="email" type="email" placeholder="E-mail" required />
+                    </div>
+                    </div>
+                
+                <div class="form-actions" id="nextStepBtnContainer">
+                    <button type="button" id="nextStepBtn" disabled>Proceed to Verification</button>
+                </div>
+            </div>
+            
+            <div id="otpSection" class="hidden">
+                <h3 style="color: var(--primary-dark-blue); margin-top: 0;">Confirm Email & Password</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="password">Create Password <span style="color: var(--accent-red)">*</span></label>
+                        <input id="password" name="password" type="password" placeholder="Create password" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="otp">OTP (sent to your email)</label>
+                        <input id="otp" name="otp" type="text" placeholder="Enter OTP" />
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="sendOtpBtn">Send OTP</button>
+                    <button type="submit" id="registerBtn" disabled>Register</button>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="alt" id="toLogin">Already have an account? Login</button>
+            </div>
+
+            <div id="msg" class="muted small msg" aria-live="polite"></div>
+        </form>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Hardcoded list of States/UTs and a few example cities for demonstration
+        const states = {
+            "Select State": [],
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur"],
+            "Arunachal Pradesh": ["Itanagar", "Naharlagun"],
+            "Assam": ["Guwahati", "Dibrugarh"],
+            "Bihar": ["Patna", "Gaya"],
+            "Chhattisgarh": ["Raipur", "Bhilai"],
+            "Goa": ["Panaji", "Margao"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara"],
+            "Haryana": ["Faridabad", "Gurugram"],
+            "Himachal Pradesh": ["Shimla", "Mandi"],
+            "Jharkhand": ["Ranchi", "Jamshedpur"],
+            "Karnataka": ["Bengaluru", "Mysuru"],
+            "Kerala": ["Thiruvananthapuram", "Kochi"],
+            "Madhya Pradesh": ["Bhopal", "Indore"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur"],
+            "Manipur": ["Imphal"],
+            "Meghalaya": ["Shillong"],
+            "Mizoram": ["Aizawl"],
+            "Nagaland": ["Kohima"],
+            "Odisha": ["Bhubaneswar", "Cuttack"],
+            "Punjab": ["Amritsar", "Ludhiana"],
+            "Rajasthan": ["Jaipur", "Udaipur"],
+            "Sikkim": ["Gangtok"],
+            "Tamil Nadu": ["Chennai", "Coimbatore"],
+            "Telangana": ["Hyderabad", "Warangal"],
+            "Tripura": ["Agartala"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur"],
+            "Uttarakhand": ["Dehradun", "Haridwar"],
+            "West Bengal": ["Kolkata", "Howrah"],
+            "Andaman and Nicobar Islands": ["Port Blair"],
+            "Chandigarh": ["Chandigarh"],
+            "Dadra and Nagar Haveli and Daman and Diu": ["Daman"],
+            "Lakshadweep": ["Kavaratti"],
+            "Delhi (NCT)": ["New Delhi"],
+            "Puducherry": ["Puducherry"],
+            "Jammu and Kashmir": ["Srinagar", "Jammu"],
+            "Ladakh": ["Leh", "Kargil"]
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDiLsLtO-ZbAKoOyLkXbT7ws9AJQhW1sAA",
+            authDomain: "exam-portal-cf32b.firebaseapp.com",
+            projectId: "exam-portal-cf32b",
+            storageBucket: "exam-portal-cf32b.firebasestorage.app",
+            messagingSenderId: "182956377341",
+            appId: "1:182956377341:web:2640609519fc16e7692a94",
+            measurementId: "G-350CKDQ104"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Elements ---
+        const form = document.getElementById("registerForm");
+        const msg = document.getElementById("msg");
+        const detailsSection = document.getElementById("detailsSection");
+        const otpSection = document.getElementById("otpSection");
+        const confirmCheckbox = document.getElementById("confirmDetails");
+        const nextStepBtn = document.getElementById("nextStepBtn");
+        const sendOtpBtn = document.getElementById("sendOtpBtn");
+        const registerBtn = document.getElementById("registerBtn");
+        const instituteStateSelect = document.getElementById("instituteState");
+        const instituteCitySelect = document.getElementById("instituteCity");
+        
+        let otpSent = false;
+        
+        // --- Populating States/UTs ---
+        const populateStates = () => {
+            for (const state in states) {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                if(state === "Select State") option.disabled = true;
+                instituteStateSelect.appendChild(option);
+            }
+        };
+
+        // --- Populating Cities based on State/UT selection ---
+        const populateCities = (stateName) => {
+            instituteCitySelect.innerHTML = '<option value="">Select District</option>';
+            instituteCitySelect.disabled = true;
+
+            const cities = states[stateName] || [];
+            if (cities.length > 0) {
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    instituteCitySelect.appendChild(option);
+                });
+                instituteCitySelect.disabled = false;
+            }
+        };
+
+        instituteStateSelect.addEventListener('change', (e) => {
+            populateCities(e.target.value);
+        });
+
+        // --- Step 1: Check Details Validity ---
+        const checkDetailsValidity = () => {
+            // Check all required inputs in the details section
+            const requiredInputs = detailsSection.querySelectorAll('input:required, select:required');
+            let allFilled = true;
+            requiredInputs.forEach(input => {
+                if (input.value.trim() === '') {
+                    // Skip check for City if it's the default option and is disabled
+                    if(input.id === 'instituteCity' && input.disabled) return;
+                    allFilled = false;
+                }
+            });
+
+            // The 'Next Step' button requires all details AND the confirmation checkbox
+            const canProceed = allFilled && confirmCheckbox.checked;
+            nextStepBtn.disabled = !canProceed;
+        };
+        
+        // Initial setup for form inputs
+        detailsSection.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', checkDetailsValidity);
+            input.addEventListener('change', checkDetailsValidity); // listen for select changes
+        });
+        
+        // Listen for checkbox change
+        confirmCheckbox.addEventListener('change', checkDetailsValidity);
+        
+        // --- Step 1 Action: Proceed to Verification ---
+        nextStepBtn.addEventListener('click', () => {
+             // Re-check validity just in case
+             if (nextStepBtn.disabled) return; 
+
+             // Hide Details and show OTP/Verification
+             detailsSection.classList.add('hidden');
+             otpSection.classList.remove('hidden');
+             msg.textContent = "Details confirmed. Now please verify your email.";
+        });
+
+        // --- Step 2: OTP/Registration Logic ---
+        const checkOtpSectionValidity = () => {
+            const passwordInput = document.getElementById("password");
+            const otpInput = document.getElementById("otp");
+            
+            // Only enable Register if password is set AND OTP has been sent AND OTP is entered
+            const canRegister = passwordInput.value.trim() !== '' && 
+                                otpSent && 
+                                otpInput.value.trim() !== '';
+            
+            registerBtn.disabled = !canRegister;
+        };
+
+        otpSection.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', checkOtpSectionValidity);
+        });
+
+
+        sendOtpBtn.addEventListener("click", async () => {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!email || !password) { 
+                msg.textContent = "The email and password fields are required before sending OTP."; 
+                return; 
+            }
+
+            // Disable button to prevent spamming
+            sendOtpBtn.disabled = true;
+            msg.textContent = "Sending OTP...";
+
+            try {
+                // NOTE: This fetch call requires a running server at http://localhost:3000
+                const res = await fetch("http://localhost:3000/send-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    // Only send the email, as the password is not needed for the OTP function
+                    body: JSON.stringify({ email }), 
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) { // Check for status 200-299
+                    otpSent = true;
+                    msg.textContent = data.message || "OTP sent successfully! Check your email.";
+                    // Re-enable send button after success (optional: for resend)
+                    sendOtpBtn.disabled = false;
+                    checkOtpSectionValidity(); 
+                } else {
+                    // Handle 500/400/etc. errors from the server
+                    otpSent = false;
+                    msg.textContent = data.message || "Failed to send OTP. See console for error details.";
+                    sendOtpBtn.disabled = false; // Re-enable on failure
+                }
+
+            } catch (err) {
+                // This catches network errors (e.g., server completely down or CORS issue)
+                console.error("Network or Fetch Error:", err);
+                msg.textContent = "Failed to send OTP. Ensure your backend server is running correctly at http://localhost:3000/send-otp.";
+                sendOtpBtn.disabled = false; // Re-enable on failure
+            }
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            msg.textContent = "Processing registration...";
+
+            if (registerBtn.disabled) return; 
+
+            // Gather all data fields
+            const data = {
+                instituteName: document.getElementById("instituteName").value.trim(),
+                instituteType: document.getElementById("instituteType").value,
+                instituteState: document.getElementById("instituteState").value,
+                instituteCity: document.getElementById("instituteCity").value,
+                firstName: document.getElementById("firstName").value.trim(),
+                middleName: document.getElementById("middleName").value.trim(),
+                lastName: document.getElementById("lastName").value.trim(),
+                contactNumber: document.getElementById("contactNumber").value.trim(),
+                studentID: document.getElementById("studentID").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("password").value.trim(),
+                otp: document.getElementById("otp").value.trim()
+            };
+
+            // Final check on OTP
+            if (!otpSent || !data.otp) { 
+                msg.textContent = "Please verify your email with the OTP first!"; 
+                return; 
+            }
+            
+            // Disable buttons during submission
+            registerBtn.disabled = true;
+            sendOtpBtn.disabled = true;
+
+            try {
+                // Step 1: Verify OTP (Backend call)
+                const verifyRes = await fetch("http://localhost:3000/verify-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: data.email, otp: data.otp }),
+                });
+                
+                const verifyData = await verifyRes.json();
+                if (!verifyRes.ok || !verifyData.success) { 
+                    msg.textContent = verifyData.message || "OTP verification failed. Please try again."; 
+                    registerBtn.disabled = false;
+                    sendOtpBtn.disabled = false;
+                    return; 
+                }
+
+                // Step 2: Create Firebase Auth User
+                const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                const uid = userCredential.user.uid;
+
+                // Step 3: Save ALL Data to Firestore (excluding password and otp)
+                await setDoc(doc(db, "users", uid), {
+                    instituteName: data.instituteName,
+                    instituteType: data.instituteType,
+                    instituteState: data.instituteState,
+                    instituteCity: data.instituteCity,
+                    firstName: data.firstName,
+                    middleName: data.middleName,
+                    lastName: data.lastName,
+                    contactNumber: data.contactNumber,
+                    studentID: data.studentID,
+                    email: data.email,
+                    
+                    verified: true,
+                    exams: [],
+                    createdAt: serverTimestamp(),
+                });
+
+                msg.textContent = "Registration successful! Redirecting to Login...";
+                setTimeout(() => { window.location.href = "login.html"; }, 1500);
+            } catch (err) {
+                console.error(err);
+                msg.textContent = "Registration failed: " + err.message;
+                registerBtn.disabled = false;
+                sendOtpBtn.disabled = false;
+            }
+        });
+
+        document.getElementById("toLogin").addEventListener("click", () => {
+            window.location.href = "login.html";
+        });
+        
+        // Run initial setup
+        populateStates();
+        checkDetailsValidity(); // Set initial state of the Next Step button
+        
+    </script>
+</body>
+</html>
